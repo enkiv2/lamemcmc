@@ -32,7 +32,7 @@ math.randomseed(os.time())
 replyrate=23
 saverate=10
 replyratio=0.01
-nick="enki"
+nick="enki-v"
 
 -- Load serialization code
 dofile("dumper.lua")
@@ -94,31 +94,45 @@ function parseFlags(arg)
 end
 
 -- Arg handling is here, actually.
-if #arg < 1 then 
-	iotrain()
-else
-	for _,filename in ipairs(arg) do
-		if (string.find(filename, "-")==1) then 
-			parseFlags(filename)
-		else
-			iotrain(filename)
+function main ()
+	if #arg < 1 then 
+		iotrain()
+	else
+		for _,filename in ipairs(arg) do
+			if (string.find(filename, "-")==1) then 
+				parseFlags(filename)
+			else
+				iotrain(filename)
+			end
 		end
+		--print("Done!")
 	end
-	--print("Done!")
+	if fInteractive~=nil then interactiveMode() end
+	exitNormal()
 end
-
 
 -- Interactive mode. Some of this is irc-specific, nick-specific, 
 -- client-specific. All you really need to know is that you take lines and
 -- optionally run them through bestResponse(), decide whether or not they
 -- rank well enough, and then train them after responding. If you train
 -- before responding, you might just repeat whatever the guy said.
-if fInteractive~=nil then
+function interactiveMode()
 	line=io.read("*l")
 	while line~=nil do
-		if string.find(line, "\*\*\*")~=1 then 
+		--- epic prefixes "***" to server info lines
+		if string.find(line, "\*\*\*")~=1 
+			and string.find(line, ">")~=1 -- epic prefixes ">" to
+			-- lines typed by the user.
+		then 
+			replynick=""
+			-- epic-specific again. Assume nicks are in brokets.
 			if string.find(line, "<")==1 then 
-				line=string.gsub(line, "^(<[^>]+> )", "")
+				line=string.gsub(line, "^(<[^>]+> )", 
+					function (c) 
+						replynick=string.sub(c, 2, 
+							string.len(c)-2)
+						return ""
+					end)
 			end
 			-- Save every ten lines, but not evenly.
 			if math.random(100)<saverate then saveDB() end
@@ -196,5 +210,4 @@ if fInteractive~=nil then
 	end
 end
 
-exitNormal()
-
+main()

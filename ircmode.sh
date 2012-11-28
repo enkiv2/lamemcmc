@@ -80,7 +80,7 @@ echo >> .$$
 # Subshell might have a different pid. (Haven't checked)
 pid=$$
 tail -s 0.5 -f .$$ | tee /dev/stderr | \
-	 (./fe.lua -nt -i && rm -f .$pid && kill $pid) | \
+	 (./fe.lua -nt -i $opts && rm -f .$pid && kill $pid) | \
 	 irc -c $channel $nick $server  >> .$$
 rm -f .$$
 

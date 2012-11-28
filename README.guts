@@ -1,0 +1,21 @@
+LameMCMC's behavior is interesting (to me, at least). It is not simply a 
+whitespace-tokenizing first-order markov model with random chaining.
+
+First off, we store three tokens at a time. It's a second-order model. This is
+actually necessary in order to get first-order level coherence because of our
+tokenization.
+
+Our tokenization is interesting in that it splits on the borderline between 
+alphanumeric and non-alphanumeric characters. Punctuation and whitespace are
+grouped together if contiguous. So, we get slightly better behavior with less
+training, and our model is quite a bit smaller.
+
+To improve coherence, we generate many random responses and then rank them
+based upon several coherence criteria. We rank responses poorly if they 
+contain fake contractions (a problem coming from our tokenization). We rank
+them poorly if they contain many non-dictionary words. We improve the ranking
+if they contain the same words as some seed sentence.
+
+We have some ranking optimizations. For instance, we prune poorly ranked 
+responses at each level of ranking.
+

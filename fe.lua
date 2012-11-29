@@ -98,6 +98,7 @@ function main ()
 	if #arg < 1 then 
 		iotrain()
 	else
+		loadDB()
 		for _,filename in ipairs(arg) do
 			if (string.find(filename, "-")==1) then 
 				parseFlags(filename)
@@ -121,6 +122,7 @@ function interactiveMode()
 	while line~=nil do
 		--- epic prefixes "***" to server info lines
 		if string.find(line, "\*\*\*")~=1 
+			and string.find(line, "-")~=1 -- hyphen before server 
 			and string.find(line, ">")~=1 -- epic prefixes ">" to
 			-- lines typed by the user.
 		then 
@@ -131,6 +133,9 @@ function interactiveMode()
 					function (c) 
 						replynick=string.sub(c, 2, 
 							string.len(c)-2)..": "
+						if string.find(replynick, "#")~=nil then
+							replynick="/msg "..string.sub(replynick, string.find(replynick, "#"), string.len(replynick)-1).." "
+						end
 						return ""
 					end)
 			end
@@ -143,7 +148,7 @@ function interactiveMode()
 					saveDB()
 					print(replynick.."Done!")
 				elseif string.find(line, "!replyrate")==1 then
-					temp=string.sub(line, string.len("!replyrate"))
+					temp=string.sub(line, string.len("!replyrate")+1)
 					if tonumber(temp)~=nil then
 						replyrate=tonumber(temp)
 						print(replynick.."Reply rate set to "..temp.."%")
@@ -152,7 +157,7 @@ function interactiveMode()
 					end
 				elseif string.find(line, "!autosaverate")==1 
 				then
-					temp=string.sub(line, string.len("!autosaverate"))
+					temp=string.sub(line, string.len("!autosaverate")+1)
 					if tonumber(temp)~=nil then
 						saverate=tonumber(temp)
 						print(replynick.."Autosave rate set to "..temp.."%")
@@ -160,12 +165,12 @@ function interactiveMode()
 						print(replynick.."Autosave rate is "..saverate.."%")
 					end
 				elseif string.find(line, "!replyratio") then
-					temp=string.sub(line, string.len("!replyratio"))
+					temp=string.sub(line, string.len("!replyratio")+1)
 					if tonumber(temp)~=nil then
 						replyratio=tonumber(temp)
-						print(replynick.."Only responses with ranks under "+temp+" will now be printed.")
+						print(replynick.."Only responses with ranks under "..temp.." will now be printed.")
 					else
-						print(replynick.."Only responses with ranks under "+replyratio+" will be printed.")
+						print(replynick.."Only responses with ranks under "..replyratio.." will be printed.")
 					end
 				elseif string.find(line, "!help") then
 					print(replynick.."Available commands are: !help !replyrate !replyratio !nick !quit !say !save !autosaverate !join !part")
@@ -198,11 +203,18 @@ function interactiveMode()
 			elseif math.random(100)<replyrate or 
 				string.find(line, nick)==1 
 			then
+				if string.find(line, nick)==1 then
+					tr=replyratio
+					replyratio=100
+				end
 				s,r=bestResponse(10, 50, line)
 				-- Don't be picky if your name is said
 				if(r<replyratio or string.find(line, nick)==1) 
 				then 
-					print(s) 
+					print(replynick..s) 
+				end
+				if string.find(line, nick)==1 then
+					replyratio=tr
 				end
 			end
 			train(line)

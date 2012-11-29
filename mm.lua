@@ -244,5 +244,6 @@ function rank(responses, seed)
 	end
 
 	--print("("..min..") Response: "..ranked[min][1])
-	return ranked[min][1] or "", min or 1000
+	if ranked[min]==nil or ranked[min][1]==nil then return "", 1000 end
+	return ranked[min][1], min
 end

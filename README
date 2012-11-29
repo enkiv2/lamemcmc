@@ -19,3 +19,7 @@ large, and they are not deleted if you kill the bot with a control-c or some
 other SIGINT/SIGKILL. So, if you are force-killing the bot frequently and 
 you want to save space, periodically clean out stale dotfiles.
 
+Please do not op the bot! We do not actually check who requests commands,
+and we have a passthrough for irc commands. So, if the bot is opped, any
+user can perform any operator actions.
+

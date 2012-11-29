@@ -46,7 +46,13 @@
 
 <p>Courtesy of <a href="https://github.com/enkiv2" class="user-mention">@enkiv2</a></p>
 
-<h2>This distribution contains:</h2>
+<h2>LameMCMC is different</h2>
+
+<ul>
+<li>The markov model is second-order, not first order (like most bots).</li>
+<li>Tokenization is performed by splitting spaces and punctuation away from alphanumeric characters. So, chunks of punctuation is preserved and words are not linked to their punctuation. This way, you can have just as much coherence as your whitespace-tokenizing first-order bot with less training data and a smaller database.</li>
+<li>Three layers of ranking eliminate the worst of a pool of possible responses. If the bot doesn't have anything nice to say (where niceness is a configurable ranking level), it doesn't say it.</li>
+</ul><h2>This distribution contains:</h2>
 
 <ul>
 <li>mm.lua -- the guts: implementation of training, response generation &amp; ranking</li>
@@ -54,9 +60,18 @@
 <li>fe.lua -- frontend: everything with file i/o or irc-specific code</li>
 <li>ircmode.sh -- connects to irc using epic/ircii</li>
 <li>mm.db -- the serialized representation of the current training data</li>
-</ul><h2>Notes:</h2>
+</ul><h2>What do I need?</h2>
 
-<p>ircmode.sh uses dot-files for temporary storage, as a pipe. These are of the form .$$, where $$ is the PID of the instance of ircmode.sh. These contain the complete log of activity as output by epic in dumb mode. These could get very large, and they are not deleted if you kill the bot with a control-c or some other SIGINT/SIGKILL. So, if you are force-killing the bot frequently and you want to save space, periodically clean out stale dotfiles.</p>
+<p>LameMCMC has a handful of requirements:</p>
+
+<ul>
+<li>A unix-like OS</li>
+<li>bash</li>
+<li>lua</li>
+<li>a dictionary file in /usr/share/dict/words</li>
+<li>(irc mode only) ircii or epic (or any irc client with a dumb-terminal mode that places angle brackets around nicks)</li>
+<li>(optional) figlet</li>
+</ul>
         </article>
       </div>
     </div>

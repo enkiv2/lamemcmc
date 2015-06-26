@@ -44,9 +44,31 @@ function loadDB()
 	if io.open("mm.db", "r")~=nil and fLoadDB==nil then dofile("mm.db") end
 end
 
+function dump(variable, name, f)
+	if(type(variable)=="string") then 
+		variable=string.gsub(variable, "\\", "\\\\")
+		return variable
+	end
+	if(type(variable)=="number") then return tostring(variable) end
+	f:write(name.."={}\n")
+	local tmp=""
+	for i,j in pairs(variable) do
+		if(type(i)=="string") then 
+			i=string.gsub(i, "\\", "\\\\")
+			i="\""..i.."\"" 
+		end
+		if(type(j)=="table") then 
+			dump(j, name.."["..i.."]", f)
+		else
+			f:write(name.."["..i.."] = "..dump(j, i,f).."\n")
+		end
+	end
+end
+
 function saveDB()
 	if fSaveDB==nil then 
-		io.open("mm.db", "w"):write(DataDumper(mm, "mm", true))
+		--io.open("mm.db", "w"):write(DataDumper(mm, "mm", true))
+		dump(mm, "mm", io.open("mm.db", "w"))
 	end
 end
 
@@ -60,6 +82,7 @@ function iotrain(file)
 	if fTrain then -- training from files is off
 		return nil
 	end
+	local f, read
 	if file==nil then 
 		file="stdin" 
 		read=io.read 
@@ -69,7 +92,7 @@ function iotrain(file)
 	end
 	if f==nil then return nil end
 	print ("Reading "..file.."...")
-	line=read("*l")
+	local line=read("*l")
 	while line ~= nil do
 		train(line)
 		line=read("*l")
@@ -118,7 +141,7 @@ end
 -- rank well enough, and then train them after responding. If you train
 -- before responding, you might just repeat whatever the guy said.
 function interactiveMode()
-	line=io.read("*l")
+	local line=io.read("*l")
 	while line~=nil do
 		--- epic prefixes "***" to server info lines
 		if string.find(line, "%*%*%*")~=1 
@@ -204,8 +227,8 @@ function interactiveMode()
 				string.find(line, nick)==1 
 			then
 				if string.find(line, nick)==1 then
-					tr=replyratio
-					replyratio=100
+					local tr=replyratio
+					local replyratio=100
 				end
 				s,r=bestResponse(10, 50, line)
 				-- Don't be picky if your name is said

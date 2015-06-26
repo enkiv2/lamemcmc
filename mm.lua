@@ -35,6 +35,8 @@ mm={}
 START=""
 END=""
 
+
+
 -- Re-initialize this because it's used in rank
 if replyratio==nil then replyratio=0.01 end
 
@@ -163,11 +165,20 @@ end
 -- Choose the best response from rankings
 function bestResponse(n, ttl, seed)
 	--print("Generating responses...")
-	responses={}
+	local responses={}
+	local words=split(seed)
+	local s
 	for i=1, n do
-		table.insert(responses, mcmc("", ttl))
+		s=words[math.random(#words)+1]
+		table.insert(responses, mcmc(s, ttl))
 	end
 	return rank(responses, seed)
+end
+
+function string_split(s, pat)
+	local tmp={}
+	string.gsub(s, pat, function(c) table.insert(tmp, c) return c end)
+	return tmp
 end
 
 -- Rank by similarity to some input statement.
@@ -221,7 +232,11 @@ function rank(responses, seed)
 	ranked={}
 	min=replyratio
 	max=-1
-
+	
+	io.stderr:write("Response candidates:\n")
+	for _,s in pairs(responses) do
+		io.stderr:write("\t"..s.."\n")
+	end
 	for _,s in pairs(responses) do
 		local rank=rankByBadContractions(s)
 		-- All this rank<min stuff here is optimization. We are only

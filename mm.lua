@@ -54,6 +54,7 @@ function split(string)
 		--print(j) 
 		table.insert(tokens, j)
 	end
+	table.insert(tokens, "")
 	return tokens
 end
 
@@ -143,7 +144,7 @@ function mcmc(seed, ttl)
 				for j=1,n do
 					if i==ri then 
 						ret=k
-						if ttl>1 then 
+						if ttl>1 and l~="" then 
 							return ret..l..mcmc(l, ttl-1) 
 						else 
 							return ret

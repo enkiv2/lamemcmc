@@ -46,7 +46,7 @@ if replyratio==nil then replyratio=0.01 end
 ]]--
 function split(string)
 	local tokens={}
-	for i,j in string.gfind(string, "(%w*)(%W*)") do 
+	for i,j in string.gmatch(string, "(%w*)(%W*)") do 
 		--print(i)
 		table.insert(tokens, i) 
 		--print(j) 
@@ -175,8 +175,8 @@ end
 function rankBySemdist(s, s2)
 	tcount=1
 	scount=1
-	for w in string.gfind(s, "([%w']+)") do
-		for w2 in string.gfind(s2, "([%w']+)") do
+	for w in string.gmatch(s, "([%w']+)") do
+		for w2 in string.gmatch(s2, "([%w']+)") do
 			if w==w2 then 
 				tcount=tcount+5 
 				scount=scount+1
@@ -192,7 +192,7 @@ function rankByBadContractions(s)
 	tcount=1
 	nwcount=1
 	acronyms={"don't", "won't", "can't", "shouldn't", "he's", "she's", "it's", "what's", "who's"}
-	for w in string.gfind(s, "([%w']+)") do
+	for w in string.gmatch(s, "([%w']+)") do
 		tcount=tcount+1
 		nf=true
 		if string.find(w, "'")==nil then nf=false end
@@ -208,7 +208,7 @@ end
 function rankBySpelling(s)
 	tcount=2.0
 	nwcount=1.0
-	for w in string.gfind(s, "(%w+)") do
+	for w in string.gmatch(s, "(%w+)") do
 		tcount=tcount+1
 		if not dictionaryWord(w) then nwcount=nwcount+1 end
 	end

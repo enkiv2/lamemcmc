@@ -121,7 +121,7 @@ function interactiveMode()
 	line=io.read("*l")
 	while line~=nil do
 		--- epic prefixes "***" to server info lines
-		if string.find(line, "\*\*\*")~=1 
+		if string.find(line, "%*%*%*")~=1 
 			and string.find(line, "-")~=1 -- hyphen before server 
 			and string.find(line, ">")~=1 -- epic prefixes ">" to
 			-- lines typed by the user.

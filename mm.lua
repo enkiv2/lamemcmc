@@ -213,6 +213,7 @@ function rankByBadContractions(s)
 		end
 		if nf then nwcount=nwcount+2 end
 	end
+	if(nwcount==1) then return 0 end
 	return nwcount/tcount
 end
 
@@ -224,6 +225,7 @@ function rankBySpelling(s)
 		tcount=tcount+1
 		if not dictionaryWord(w) then nwcount=nwcount+1 end
 	end
+	if(nwcount==1.0) then return 0 end
 	return (nwcount/tcount)
 end
 
@@ -242,6 +244,7 @@ function rank(responses, seed)
 		local rank=rankByBadContractions(s)
 		if(rank==nil) then rank=100000 end
 		if(min==nil) then min=0 end
+		if(string.find(s, "%w")==nil) then rank=100000 end
 		-- All this rank<min stuff here is optimization. We are only
 		-- concerned with good rankings, so we might as well rank in 
 		-- the easiest/fastest ways first and eliminate those responses
@@ -252,7 +255,7 @@ function rank(responses, seed)
 				rank=rank*rankBySpelling(s)
 				if rank>max then max=rank end
 				if rank<min then min=rank end
-				io.stderr:write("\t"..tostr(rank).."\t"..s)
+				io.stderr:write("\t"..tostring(rank).."\t"..s)
 				if ranked[rank]==nil then
 					ranked[rank]={s}
 				else

@@ -231,8 +231,10 @@ function interactiveMode()
 					local replyratio=100
 				end
 				s,r=bestResponse(25, #split(line)*2, line)
+				if(r==nil) then r=100000 end
+				if(replyratio==nil) then replyratio=0 end
 				-- Don't be picky if your name is said
-				if(r<replyratio or string.find(line, nick)==1) 
+				if((r<replyratio and math.random(100)<replyratio)) 
 				then 
 					print(replynick..s) 
 				end

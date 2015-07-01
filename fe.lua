@@ -230,7 +230,7 @@ function interactiveMode()
 					local tr=replyratio
 					local replyratio=100
 				end
-				s,r=bestResponse(15, #split(line)*2, line)
+				s,r=bestResponse(25, #split(line)*2, line)
 				-- Don't be picky if your name is said
 				if(r<replyratio or string.find(line, nick)==1) 
 				then 

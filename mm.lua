@@ -240,6 +240,8 @@ function rank(responses, seed)
 	end
 	for _,s in pairs(responses) do
 		local rank=rankByBadContractions(s)
+		if(rank==nil) then rank=100000 end
+		if(min==nil) then min=0 end
 		-- All this rank<min stuff here is optimization. We are only
 		-- concerned with good rankings, so we might as well rank in 
 		-- the easiest/fastest ways first and eliminate those responses
@@ -250,6 +252,7 @@ function rank(responses, seed)
 				rank=rank*rankBySpelling(s)
 				if rank>max then max=rank end
 				if rank<min then min=rank end
+				io.stderr:write("\t"..tostr(rank).."\t"..s)
 				if ranked[rank]==nil then
 					ranked[rank]={s}
 				else

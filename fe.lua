@@ -35,34 +35,22 @@ replyratio=0.01
 nick="enki-v"
 
 -- Load serialization code
-dofile("dumper.lua")
+--dofile("dumper.lua")
 
 dofile("mm.lua")
 
+mp=require("MessagePack")
+
 function loadDB()
 	-- Load the old copy of mm if we have database loading on
-	if io.open("mm.db", "r")~=nil and fLoadDB==nil then dofile("mm.db") end
+	if io.open("mm.db", "r")~=nil and fLoadDB==nil then 
+		mm=mp.unpack(io.open("mm.db", "r"):read("*a")) 
+	end
 end
 
 function dump(variable, name, f)
-	if(type(variable)=="string") then 
-		variable=string.gsub(variable, "\\", "\\\\")
-		return variable
-	end
-	if(type(variable)=="number") then return tostring(variable) end
-	f:write(name.."={}\n")
-	local tmp=""
-	for i,j in pairs(variable) do
-		if(type(i)=="string") then 
-			i=string.gsub(i, "\\", "\\\\")
-			i="\""..i.."\"" 
-		end
-		if(type(j)=="table") then 
-			dump(j, name.."["..i.."]", f)
-		else
-			f:write(name.."["..i.."] = "..dump(j, i,f).."\n")
-		end
-	end
+	f:write(mp.pack(variable))
+	f:flush()
 end
 
 function saveDB()
@@ -82,6 +70,8 @@ function iotrain(file)
 	if fTrain then -- training from files is off
 		return nil
 	end
+	local i,j
+	i=0 j=0
 	local f, read
 	if file==nil then 
 		file="stdin" 
@@ -94,9 +84,21 @@ function iotrain(file)
 	print ("Reading "..file.."...")
 	local line=read("*l")
 	while line ~= nil do
+		i=i+1
+		j=j+1
+		io.write(".")
+		if(i>=100) then
+			print(j)
+			if(j%10000 == 0) then
+				forgetProgressive(10+(j/10000))
+				saveDB()
+			end
+			i=0
+		end
 		train(line)
 		line=read("*l")
 	end
+	print(j)
 end
 
 function parseFlags(arg)

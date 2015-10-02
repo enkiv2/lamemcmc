@@ -106,6 +106,19 @@ function train(string)
 	end
 end
 
+function forgetProgressive(min)
+	for word,val in pairs(mm) do
+		i=0
+		for w2,_ in pairs(val) do
+			i=i+1
+		end
+		if(i<min) then
+			mm[word]=nil
+		end
+	end
+end
+
+
 --[[ Do markov chain monte carlo on mm. $seed is the first word in the 
 	sentence (if any). $ttl is the maximum number of iterations.
 --]]
